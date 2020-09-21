@@ -78,7 +78,8 @@ export default function BlockList({ initialItems, ...props }: Props) {
           onKeyDown={(event) => {
             const { key } = event;
             if (key && key.length === 1) {
-              combobox.setInputValue(key);
+              // combobox.setInputValue(key);
+              // ref.current.value = key;
               ref.current?.focus();
             }
           }}

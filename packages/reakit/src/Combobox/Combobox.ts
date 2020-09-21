@@ -155,8 +155,8 @@ export const unstable_useCombobox = createHook<
     // Auto select on type
     useUpdateEffect(() => {
       if (
-        options.autoSelect &&
         options.items.length &&
+        options.autoSelect &&
         hasInsertedTextRef.current
       ) {
         // If autoSelect is set to true and the last change was a text
@@ -176,6 +176,7 @@ export const unstable_useCombobox = createHook<
       options.setCurrentId,
     ]);
 
+    // TODO: Test autoSelect arrowDown carret
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent<HTMLInputElement>) => {
         onKeyDownRef.current?.(event);
@@ -268,10 +269,41 @@ export const unstable_useCombobox = createHook<
   ) {
     const compositeHTMLProps = useComposite(options, htmlProps, true);
 
-    const onKeyDown = React.useCallback(
+    // TODO: Write tests for Combobox Grid inputHasFocus ArrowLeft, Home
+    const onKeyDownCapture = React.useCallback(
       (event: React.KeyboardEvent<HTMLInputElement>) => {
         const inputHasFocus = options.currentId === null;
+        if (inputHasFocus) {
+          if (
+            event.key === "ArrowLeft" ||
+            event.key === "ArrowRight" ||
+            event.key === "Home" ||
+            event.key === "End"
+          ) {
+            // Do not perform list actions when pressing horizontal arrow keys
+            // when focusing the combobox input while no option has focus.
+            return;
+          }
+        } else if (
+          options.menuRole !== "grid" &&
+          (event.key === "Home" ||
+            event.key === "End" ||
+            event.key.length === 1)
+        ) {
+          // If menu is a one-dimensional list and there's an option with
+          // focus, we don't want Home/End and printable characters to perform
+          // actions on the option, only on the combobox input.
+          return;
+        }
+        compositeHTMLProps.onKeyDownCapture?.(event);
+      },
+      [compositeHTMLProps.onKeyDownCapture, options.currentId, options.menuRole]
+    );
+
+    const onKeyDown = React.useCallback(
+      (event: React.KeyboardEvent<HTMLInputElement>) => {
         htmlOnKeyDown?.(event);
+        const inputHasFocus = options.currentId === null;
         if (inputHasFocus) {
           if (
             event.key === "ArrowLeft" ||
@@ -317,15 +349,6 @@ export const unstable_useCombobox = createHook<
           // focus, we don't want Up/Down arrow keys to move the caret on the
           // combobox input.
           event.preventDefault();
-        } else if (
-          event.key === "Home" ||
-          event.key === "End" ||
-          event.key.length === 1
-        ) {
-          // If menu is a one-dimensional list and there's an option with
-          // focus, we don't want Home/End and printable characters to perform
-          // actions on the option, only on the combobox input.
-          return;
         }
         compositeHTMLProps.onKeyDown?.(event);
       },
@@ -338,6 +361,7 @@ export const unstable_useCombobox = createHook<
     );
     return {
       ...compositeHTMLProps,
+      onKeyDownCapture,
       onKeyDown,
       onKeyUp,
     };
