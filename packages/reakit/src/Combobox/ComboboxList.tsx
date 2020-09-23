@@ -1,3 +1,4 @@
+import * as React from "react";
 import { createComponent } from "reakit-system/createComponent";
 import { createHook } from "reakit-system/createHook";
 import { useWarning } from "reakit-warning";
@@ -6,6 +7,10 @@ import { BoxOptions, BoxHTMLProps, useBox } from "../Box/Box";
 import { getMenuId } from "./__utils/getMenuId";
 import { unstable_ComboboxStateReturn } from "./ComboboxState";
 import { COMBOBOX_LIST_KEYS } from "./__keys";
+
+export const ComboboxContext = React.createContext<unstable_ComboboxStateReturn | null>(
+  null
+);
 
 export const unstable_useComboboxList = createHook<
   unstable_ComboboxListOptions,
@@ -19,10 +24,26 @@ export const unstable_useComboboxList = createHook<
     return { menuRole, ...options };
   },
 
-  useProps(options, htmlProps) {
+  useProps(options, { wrapElement: htmlWrapElement, ...htmlProps }) {
+    const [initialState] = React.useState(options);
+    const wrapElement = React.useCallback(
+      (element: React.ReactNode) => {
+        if (htmlWrapElement) {
+          element = htmlWrapElement(element);
+        }
+        element = (
+          <ComboboxContext.Provider value={initialState}>
+            {element}
+          </ComboboxContext.Provider>
+        );
+        return element;
+      },
+      [htmlWrapElement]
+    );
     return {
       role: options.menuRole,
       id: getMenuId(options.baseId),
+      wrapElement,
       ...htmlProps,
     };
   },
@@ -42,7 +63,7 @@ export const unstable_ComboboxList = createComponent({
 });
 
 export type unstable_ComboboxListOptions = BoxOptions &
-  Pick<Partial<unstable_ComboboxStateReturn>, "menuRole"> &
+  Pick<Partial<unstable_ComboboxStateReturn>, "menuRole" | "subscribe"> &
   Pick<unstable_ComboboxStateReturn, "baseId">;
 
 export type unstable_ComboboxListHTMLProps = BoxHTMLProps;

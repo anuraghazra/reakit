@@ -12,6 +12,7 @@ import { unstable_ComboboxStateReturn } from "./ComboboxState";
 import { COMBOBOX_ITEM_KEYS } from "./__keys";
 import { getItemId } from "./__utils/getItemId";
 import { Item } from "./__utils/types";
+import { ComboboxContext } from "./ComboboxList";
 
 export const unstable_useComboboxItem = createHook<
   unstable_ComboboxItemOptions,
@@ -40,9 +41,14 @@ export const unstable_useComboboxItem = createHook<
       matches: nextMatches,
       ...nextProps
     } = next;
-    if (prevCurrentValue !== nextCurrentValue) {
-      if (next.value === prevCurrentValue || next.value === nextCurrentValue) {
-        return false;
+    if (!next.subscribe) {
+      if (prevCurrentValue !== nextCurrentValue) {
+        if (
+          next.value === prevCurrentValue ||
+          next.value === nextCurrentValue
+        ) {
+          return false;
+        }
       }
     }
     const prevId = getItemId(prev.baseId, prev.value, prev.id);
@@ -56,21 +62,51 @@ export const unstable_useComboboxItem = createHook<
   useOptions(options) {
     const trulyDisabled = options.disabled && !options.focusable;
     const value = trulyDisabled ? undefined : options.value;
+    const context = React.useContext(ComboboxContext);
+    const [state, setState] = React.useState(context || options);
 
     const registerItem = React.useCallback(
       (item: Item) => {
-        if (options.visible) {
-          options.registerItem?.({ ...item, value });
+        if (state.visible) {
+          state.registerItem?.({ ...item, value });
         }
       },
-      [options.registerItem, options.visible, value]
+      [state.registerItem, state.visible, value]
     );
 
-    if (options.id || !options.baseId || !options.value) {
+    const id = state.baseId
+      ? getItemId(state.baseId, options.value, options.id)
+      : options.id;
+
+    React.useEffect(() => {
+      return state.subscribe?.((nextState) => {
+        if (
+          state.visible !== nextState.visible ||
+          id === nextState.currentId ||
+          id === state.currentId
+        ) {
+          setState(nextState);
+        }
+        // setState((prevState) => {
+        //   if (
+        //     prevState.visible !== nextState.visible ||
+        //     id === nextState.currentId ||
+        //     id === prevState.currentId
+        //   ) {
+        //     return nextState;
+        //   }
+        //   return prevState;
+        // });
+      });
+    }, [state.subscribe, state.visible, state.currentId, id]);
+
+    if (options.id || !state.baseId || !options.value) {
       return { ...options, registerItem };
     }
 
-    const id = getItemId(options.baseId, options.value, options.id);
+    if (state.subscribe) {
+      return { ...state, ...options, registerItem, id };
+    }
     return { ...options, registerItem, id };
   },
 
@@ -107,7 +143,7 @@ export type unstable_ComboboxItemOptions = BoxOptions &
   CompositeItemOptions &
   Pick<
     Partial<unstable_ComboboxStateReturn>,
-    "currentValue" | "inputValue" | "hide" | "visible"
+    "currentValue" | "inputValue" | "hide" | "visible" | "subscribe"
   > &
   Pick<unstable_ComboboxStateReturn, "setInputValue" | "registerItem"> & {
     /**

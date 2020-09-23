@@ -1,7 +1,7 @@
 import * as React from "react";
 import {
   unstable_useComboboxState as useComboboxState,
-  unstable_Combobox as Combobox,
+  unstable_Combobox as ComboboxInput,
   unstable_ComboboxPopover as ComboboxPopover,
   unstable_ComboboxOption as ComboboxOption,
 } from "reakit/Combobox";
@@ -9,18 +9,49 @@ import { colors } from "./colors";
 
 import "./style.css";
 
-export default function ComboboxList() {
-  const combobox = useComboboxState({ values: colors, gutter: 8 });
+function Combobox({ value, onChange, onMatch, children }) {
+  const combobox = useComboboxState({
+    inline: true,
+    autoSelect: true,
+    values: colors,
+    gutter: 8,
+    limit: 200,
+  });
+  React.useEffect(() => {
+    const id = setTimeout(() => {
+      onMatch?.(combobox.matches);
+    });
+    return () => clearTimeout(id);
+  }, [combobox.matches]);
   return (
     <>
-      <Combobox {...combobox} aria-label="Color" placeholder="Type a color" />
+      <ComboboxInput
+        {...combobox}
+        // value={value}
+        // onChange={onChange}
+        aria-label="Color"
+        placeholder="Type a color"
+      />
       <ComboboxPopover {...combobox} aria-label="Colors">
-        {combobox.matches.length
-          ? combobox.matches.map((value) => (
-              <ComboboxOption {...combobox} key={value} value={value} />
-            ))
-          : "No results found"}
+        {children}
       </ComboboxPopover>
     </>
+  );
+}
+
+export default function ComboboxList() {
+  const [matches, setMatches] = React.useState([]);
+  // const [value, setValue] = React.useState("");
+  // console.log(value);
+  return (
+    <Combobox
+      // value={value}
+      // onChange={(event) => setValue(event.target.value)}
+      onMatch={setMatches}
+    >
+      {matches.length
+        ? matches.map((value) => <ComboboxOption key={value} value={value} />)
+        : "No results found"}
+    </Combobox>
   );
 }

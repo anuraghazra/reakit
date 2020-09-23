@@ -958,7 +958,7 @@ similarly to `readOnly` on form elements. In this case, only
 based on the input value. You can omit this for items that perform
 actions other than filling a form. For example, items may open a dialog.
 
-<details><summary>20 state props</summary>
+<details><summary>21 state props</summary>
 
 > These props are returned by the state hook. You can spread them into this component (`{...state}`) or pass them separately. You can also provide these props from your own state logic.
 
@@ -1080,6 +1080,11 @@ the `matches` property.
   <code>() =&#62; void</code>
 
   Changes the `visible` state to `false`
+
+- **`subscribe`**
+  <code title="(listener: (state: unstable_ComboboxStateReturn, prevState: unstable_ComboboxStateReturn) =&#62; any) =&#62; void">(listener: (state: unstable_ComboboxStateReturn...</code>
+
+  TODO
 
 - **`setInputValue`**
   <code>(value: SetStateAction&#60;string&#62;) =&#62; void</code>
@@ -1166,7 +1171,7 @@ similarly to `readOnly` on form elements. In this case, only
 based on the input value. You can omit this for items that perform
 actions other than filling a form. For example, items may open a dialog.
 
-<details><summary>20 state props</summary>
+<details><summary>21 state props</summary>
 
 > These props are returned by the state hook. You can spread them into this component (`{...state}`) or pass them separately. You can also provide these props from your own state logic.
 
@@ -1289,6 +1294,11 @@ the `matches` property.
 
   Changes the `visible` state to `false`
 
+- **`subscribe`**
+  <code title="(listener: (state: unstable_ComboboxStateReturn, prevState: unstable_ComboboxStateReturn) =&#62; any) =&#62; void">(listener: (state: unstable_ComboboxStateReturn...</code>
+
+  TODO
+
 - **`setInputValue`**
   <code>(value: SetStateAction&#60;string&#62;) =&#62; void</code>
 
@@ -1298,7 +1308,7 @@ the `matches` property.
 
 ### `ComboboxList`
 
-<details><summary>2 state props</summary>
+<details><summary>3 state props</summary>
 
 > These props are returned by the state hook. You can spread them into this component (`{...state}`) or pass them separately. You can also provide these props from your own state logic.
 
@@ -1306,6 +1316,11 @@ the `matches` property.
   <code>&#34;listbox&#34; | &#34;tree&#34; | &#34;grid&#34; | &#34;dialog&#34;</code>
 
   Indicates the type of the suggestions popup.
+
+- **`subscribe`**
+  <code title="(listener: (state: unstable_ComboboxStateReturn, prevState: unstable_ComboboxStateReturn) =&#62; any) =&#62; void">(listener: (state: unstable_ComboboxStateReturn...</code>
+
+  TODO
 
 - **`baseId`**
   <code>string</code>
@@ -1340,7 +1355,7 @@ similarly to `readOnly` on form elements. In this case, only
 based on the input value. You can omit this for items that perform
 actions other than filling a form. For example, items may open a dialog.
 
-<details><summary>20 state props</summary>
+<details><summary>21 state props</summary>
 
 > These props are returned by the state hook. You can spread them into this component (`{...state}`) or pass them separately. You can also provide these props from your own state logic.
 
@@ -1462,6 +1477,11 @@ the `matches` property.
   <code>() =&#62; void</code>
 
   Changes the `visible` state to `false`
+
+- **`subscribe`**
+  <code title="(listener: (state: unstable_ComboboxStateReturn, prevState: unstable_ComboboxStateReturn) =&#62; any) =&#62; void">(listener: (state: unstable_ComboboxStateReturn...</code>
+
+  TODO
 
 - **`setInputValue`**
   <code>(value: SetStateAction&#60;string&#62;) =&#62; void</code>
@@ -1508,7 +1528,7 @@ Opening a nested orphan dialog will close its parent dialog if
 `hideOnClickOutside` is set to `true` on the parent.
 It will be set to `false` if `modal` is `false`.
 
-<details><summary>9 state props</summary>
+<details><summary>10 state props</summary>
 
 > These props are returned by the state hook. You can spread them into this component (`{...state}`) or pass them separately. You can also provide these props from your own state logic.
 
@@ -1516,6 +1536,11 @@ It will be set to `false` if `modal` is `false`.
   <code>&#34;listbox&#34; | &#34;tree&#34; | &#34;grid&#34; | &#34;dialog&#34;</code>
 
   Indicates the type of the suggestions popup.
+
+- **`subscribe`**
+  <code title="(listener: (state: unstable_ComboboxStateReturn, prevState: unstable_ComboboxStateReturn) =&#62; any) =&#62; void">(listener: (state: unstable_ComboboxStateReturn...</code>
+
+  TODO
 
 - **`baseId`**
   <code>string</code>
